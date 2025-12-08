@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de Control para Envío de Alertas de Emergencia - Sistema de Protección Civil Baja California">
+    <title>Panel de Envío de Alertas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <h1>📢 Centro de Control de Alertas</h1>
+        <p class="lead">Sistema de Protección Civil - Baja California</p>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h4 class="mb-0">Enviar Nueva Alerta</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/send_alert" method="POST">
+                            <div class="mb-3">
+                                <label for="alert_type" class="form-label">Tipo de Alerta</label>
+                                <select class="form-select" id="alert_type" name="alert_type" required>
+                                    <option value="flood">🌊 Inundación</option>
+                                    <option value="fire">🔥 Incendio</option>
+                                    <option value="rain">🌧️ Lluvia Fuerte</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Ubicación</label>
+                                <select class="form-select" id="location" name="location" required>
+                                    <option value="Tijuana">Tijuana</option>
+                                    <option value="Ensenada">Ensenada</option>
+                                    <option value="General">Toda la Costa</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="severity" class="form-label">Nivel de Severidad</label>
+                                <select class="form-select" id="severity" name="severity" required>
+                                    <option value="low">🟡 Amarilla (Precaución)</option>
+                                    <option value="medium">🟠 Naranja (Peligro)</option>
+                                    <option value="high">🔴 Roja (Emergencia)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Mensaje Personalizado (Opcional)</label>
+                                <textarea class="form-control" id="message" name="message" rows="3" placeholder="Escriba instrucciones específicas para la población..."></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger btn-lg">
+                                    🚀 ENVIAR ALERTA AHORA
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
