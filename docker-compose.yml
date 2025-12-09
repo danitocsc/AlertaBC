@@ -8,3 +8,14 @@ services:
     environment:
       - FLASK_ENV=development
     restart: always
+
+  admin-panel:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+    command: gunicorn -b 0.0.0.0:5001 alert_sender:app
+    restart: always

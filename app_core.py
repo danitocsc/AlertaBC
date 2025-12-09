@@ -186,6 +186,7 @@ class WeatherSystem:
                     # 0:id, 1:location, 2:alert_level, 3:timestamp, 4:precip, 5:message, 6:ack, 7:lat, 8:lon, 9:postal, 10:loc_name
                     
                     data = json.dumps({
+                        'type': 'alert',
                         'id': row[0],
                         'location': row[1],
                         'alert_level': row[2],

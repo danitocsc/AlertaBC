@@ -548,12 +548,29 @@ function connectEventSource() {
     eventSource.onmessage = function (event) {
         const data = JSON.parse(event.data);
         if (data.type === 'alert') {
+
+            // Trigger Notification
             if (Notification.permission === 'granted') {
-                new Notification(`ALERTA: ${data.alert_level.toUpperCase()}`, {
+                const title = `ALERTA: ${data.alert_level.toUpperCase()}`;
+                const options = {
                     body: data.message,
-                    icon: '/static/alert-icon.png'
-                });
+                    icon: '/static/icon.svg', // Fixed icon path
+                    vibrate: [200, 100, 200],
+                    badge: '/static/icon.svg',
+                    tag: 'alert-' + data.id
+                };
+
+                // Try Service Worker registration first (better for mobile/PWA)
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(function (registration) {
+                        registration.showNotification(title, options);
+                    });
+                } else {
+                    // Fallback to classic API
+                    new Notification(title, options);
+                }
             }
+
             prependAlert(data);
             if (data.alert_level === 'red') {
                 $('#emergencyMessage').html('<i class="fas fa-exclamation-triangle"></i> ' + data.message);
