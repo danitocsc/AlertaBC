@@ -123,320 +123,321 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             margin-bottom: 20px;
+        }
 
-            .search-wrapper button:hover {
-                color: #0d6efd;
+        .weather-card-hero .search-wrapper button:hover {
+            color: #0d6efd;
+        }
+
+        /* Hero Content Split */
+        .weather-card-hero .hero-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px 20px 20px;
+        }
+
+        .weather-card-hero .hero-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .weather-card-hero .temp-display {
+            font-size: 4.5rem;
+            font-weight: 500;
+            color: #202124;
+            line-height: 1;
+            margin-right: 15px;
+        }
+
+        .weather-card-hero .weather-icon-large {
+            font-size: 3rem;
+            color: #fbbc04;
+            /* Default sun color */
+        }
+
+        .weather-card-hero .hero-right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Data Chips */
+        .weather-card-hero .data-chip {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #5f6368;
+            min-width: 100px;
+        }
+
+        .weather-card-hero .data-chip i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+            /* Increased from 1rem */
+            width: 24px;
+            /* Increased width */
+            text-align: center;
+        }
+
+        .weather-card-hero .data-chip span {
+            font-weight: 600;
+            color: #202124;
+            margin-left: auto;
+            font-size: 0.95rem;
+            /* Slightly larger text */
+        }
+
+        /* Horizontal Hourly Slider */
+        .weather-card-hero .hourly-slider-container {
+            border-top: 1px solid #f1f3f4;
+            padding: 15px 0;
+            margin-top: 10px;
+            /* Ensure container clips overflow */
+            overflow: hidden;
+        }
+
+        .weather-card-hero .hourly-slider {
+            display: flex;
+            overflow-x: auto;
+            padding: 0 20px;
+            gap: 25px;
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE 10+ */
+            /* Right padding to show cut-off effect */
+            padding-right: 40px;
+        }
+
+        .weather-card-hero .hourly-slider::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .weather-card-hero .hourly-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .weather-card-hero .hourly-time {
+            font-size: 0.8rem;
+            color: #5f6368;
+            margin-bottom: 8px;
+        }
+
+        .weather-card-hero .hourly-icon {
+            font-size: 1.2rem;
+            color: #5f6368;
+            margin-bottom: 8px;
+        }
+
+        .weather-card-hero .hourly-temp {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        /* Alert Styles */
+        .alert-card {
+            border: none;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+            /* For indicator positioning */
+        }
+
+        /* Fixed border radius consistency */
+        .alert-indicator {
+            width: 6px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .indicator-green {
+            background-color: var(--green-alert);
+        }
+
+        .indicator-yellow {
+            background-color: var(--yellow-alert);
+        }
+
+        .indicator-orange {
+            background-color: var(--orange-alert);
+        }
+
+        .indicator-red {
+            background-color: var(--red-alert);
+        }
+
+        .alert-header {
+            padding: 15px 15px 15px 25px;
+            /* Extra left padding for indicator */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-green .alert-header {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--green-alert);
+        }
+
+        .alert-yellow .alert-header {
+            background: rgba(255, 193, 7, 0.1);
+            color: #856404;
+        }
+
+        .alert-orange .alert-header {
+            background: rgba(253, 126, 20, 0.1);
+            color: var(--orange-alert);
+        }
+
+        .alert-red .alert-header {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--red-alert);
+        }
+
+        .alert-body {
+            padding: 15px;
+            padding-left: 25px;
+            /* Align with header text */
+        }
+
+        /* Chart Containers */
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Footer/Settings */
+        .settings-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Emergency Banner */
+        .emergency-banner {
+            background: linear-gradient(45deg, var(--red-alert), var(--orange-alert));
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
             }
 
-            /* Hero Content Split */
-            .hero-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 10px 20px 20px 20px;
-            }
-
-            .hero-left {
-                display: flex;
-                align-items: center;
-            }
-
-            .temp-display {
-                font-size: 4.5rem;
-                font-weight: 500;
-                color: #202124;
-                line-height: 1;
-                margin-right: 15px;
-            }
-
-            .weather-icon-large {
-                font-size: 3rem;
-                color: #fbbc04;
-                /* Default sun color */
-            }
-
-            .hero-right {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            /* Data Chips */
-            .data-chip {
-                background: #f8f9fa;
-                border-radius: 12px;
-                padding: 8px 12px;
-                display: flex;
-                align-items: center;
-                font-size: 0.85rem;
-                color: #5f6368;
-                min-width: 100px;
-            }
-
-            .data-chip i {
-                margin-right: 8px;
-                font-size: 1.2rem;
-                /* Increased from 1rem */
-                width: 24px;
-                /* Increased width */
-                text-align: center;
-            }
-
-            .data-chip span {
-                font-weight: 600;
-                color: #202124;
-                margin-left: auto;
-                font-size: 0.95rem;
-                /* Slightly larger text */
-            }
-
-            /* Horizontal Hourly Slider */
-            .hourly-slider-container {
-                border-top: 1px solid #f1f3f4;
-                padding: 15px 0;
-                margin-top: 10px;
-                /* Ensure container clips overflow */
-                overflow: hidden;
-            }
-
-            .hourly-slider {
-                display: flex;
-                overflow-x: auto;
-                padding: 0 20px;
-                gap: 25px;
-                scrollbar-width: none;
-                /* Firefox */
-                -ms-overflow-style: none;
-                /* IE 10+ */
-                /* Right padding to show cut-off effect */
-                padding-right: 40px;
-            }
-
-            .hourly-slider::-webkit-scrollbar {
-                display: none;
-                /* Chrome/Safari */
-            }
-
-            .hourly-cell {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                min-width: 45px;
-                text-align: center;
-            }
-
-            .hourly-time {
-                font-size: 0.8rem;
-                color: #5f6368;
-                margin-bottom: 8px;
-            }
-
-            .hourly-icon {
-                font-size: 1.2rem;
-                color: #5f6368;
-                margin-bottom: 8px;
-            }
-
-            .hourly-temp {
-                font-size: 0.95rem;
-                font-weight: 600;
-                color: #202124;
-            }
-
-            /* Alert Styles */
-            .alert-card {
-                border: none;
-                border-radius: 16px;
-                margin-bottom: 15px;
-                background: white;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-                overflow: hidden;
-                position: relative;
-                /* For indicator positioning */
-            }
-
-            /* Fixed border radius consistency */
-            .alert-indicator {
-                width: 6px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                top: 0;
-                border-top-left-radius: 16px;
-                border-bottom-left-radius: 16px;
-            }
-
-            .indicator-green {
-                background-color: var(--green-alert);
-            }
-
-            .indicator-yellow {
-                background-color: var(--yellow-alert);
-            }
-
-            .indicator-orange {
-                background-color: var(--orange-alert);
-            }
-
-            .indicator-red {
-                background-color: var(--red-alert);
-            }
-
-            .alert-header {
-                padding: 15px 15px 15px 25px;
-                /* Extra left padding for indicator */
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .alert-green .alert-header {
-                background: rgba(40, 167, 69, 0.1);
-                color: var(--green-alert);
-            }
-
-            .alert-yellow .alert-header {
-                background: rgba(255, 193, 7, 0.1);
-                color: #856404;
-            }
-
-            .alert-orange .alert-header {
-                background: rgba(253, 126, 20, 0.1);
-                color: var(--orange-alert);
-            }
-
-            .alert-red .alert-header {
-                background: rgba(220, 53, 69, 0.1);
-                color: var(--red-alert);
-            }
-
-            .alert-body {
-                padding: 15px;
-                padding-left: 25px;
-                /* Align with header text */
-            }
-
-            /* Chart Containers */
-            .chart-card {
-                background: white;
-                border-radius: 20px;
-                padding: 20px;
-                margin-bottom: 20px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            }
-
-            /* Footer/Settings */
-            .settings-card {
-                background: white;
-                border-radius: 20px;
-                padding: 20px;
-                margin-bottom: 15px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            }
-
-            /* Emergency Banner */
-            .emergency-banner {
-                background: linear-gradient(45deg, var(--red-alert), var(--orange-alert));
-                color: white;
-                padding: 15px;
-                border-radius: 12px;
-                margin-bottom: 20px;
-                text-align: center;
-                font-weight: bold;
-                display: none;
-                box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-            }
-
-            .pulse {
-                animation: pulse 2s infinite;
-            }
-
-            @keyframes pulse {
-                0% {
-                    opacity: 1;
-                }
-
-                50% {
-                    opacity: 0.8;
-                }
-
-                100% {
-                    opacity: 1;
-                }
-            }
-
-            /* Utilities */
-            .badge-pill {
-                border-radius: 50rem;
-                padding: 0.4em 0.8em;
-                font-weight: 600;
-                font-size: 0.75em;
-            }
-
-            /* Location Selection Styles - Redesigned (Split) */
-            .btn-location-header {
-                background: transparent;
-                border: none;
-                padding: 0;
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                /* Aligns content to the left */
-                transition: opacity 0.2s;
-                text-align: left;
-            }
-
-            .btn-location-header:hover {
+            50% {
                 opacity: 0.8;
             }
 
-            .search-wrapper {
-                position: relative;
-                background: #f8f9fa;
-                border-radius: 30px;
-                padding: 4px;
-                display: flex;
-                align-items: center;
-                border: 1px solid #e9ecef;
-                transition: all 0.3s ease;
+            100% {
+                opacity: 1;
             }
+        }
 
-            .search-wrapper:focus-within {
-                background: #fff;
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
-            }
+        /* Utilities */
+        .badge-pill {
+            border-radius: 50rem;
+            padding: 0.4em 0.8em;
+            font-weight: 600;
+            font-size: 0.75em;
+        }
 
-            .search-wrapper input {
-                border: none;
-                background: transparent;
-                width: 100%;
-                padding: 12px 15px;
-                outline: none;
-                font-size: 0.95rem;
-                color: #333;
-                flex-grow: 1;
-            }
+        /* Location Selection Styles - Redesigned (Split) */
+        .btn-location-header {
+            background: transparent;
+            border: none;
+            padding: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            /* Aligns content to the left */
+            transition: opacity 0.2s;
+            text-align: left;
+        }
 
-            .search-action-btn {
-                background: #0d6efd;
-                color: white;
-                border: none;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: background 0.2s;
-                margin-right: 4px;
-            }
+        .btn-location-header:hover {
+            opacity: 0.8;
+        }
 
-            .search-action-btn:hover {
-                background: #0b5ed7;
-            }
+        .search-wrapper {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 30px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .search-wrapper:focus-within {
+            background: #fff;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .search-wrapper input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 12px 15px;
+            outline: none;
+            font-size: 0.95rem;
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .search-action-btn {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-right: 4px;
+        }
+
+        .search-action-btn:hover {
+            background: #0b5ed7;
+        }
     </style>
 </head>
 
