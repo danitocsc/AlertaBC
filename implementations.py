@@ -138,11 +138,15 @@ class WeatherRepositorySQLite(IWeatherRepository):
         conn.commit()
         conn.close()
 
-    def get_recent_alerts(self, limit: int = 20) -> List[Dict[str, Any]]:
+    def get_recent_alerts(self, limit: int = 50) -> List[Dict[str, Any]]:
         conn = self._get_connection()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute(f'SELECT * FROM alerts ORDER BY timestamp DESC LIMIT {limit}')
+        
+        # Filter alerts from the last 1 hour
+        one_hour_ago = (datetime.now() - timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+        
+        cursor.execute('SELECT * FROM alerts WHERE timestamp >= ? ORDER BY timestamp DESC LIMIT ?', (one_hour_ago, limit))
         rows = cursor.fetchall()
         conn.close()
         
