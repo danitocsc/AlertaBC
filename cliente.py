@@ -50,6 +50,13 @@ def get_user_location():
         return session[USER_LOCATION_KEY]
     return None
 
+@app.route('/sw.js')
+def service_worker():
+    """Serve the service worker from root to control the whole scope."""
+    response = app.send_static_file('sw.js')
+    response.headers['Content-Type'] = 'application/javascript'
+    return response
+
 @app.route('/')
 def index():
     """Render the main dashboard."""

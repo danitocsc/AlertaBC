@@ -17,6 +17,13 @@ $(document).ready(function () {
     updateLastUpdateTime();
     setInterval(updateTimeAgo, 30000);
     setupNotifications();
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('SW registred:', reg.scope))
+            .catch(err => console.error('SW failed:', err));
+    }
 });
 
 function checkUserLocation() {
