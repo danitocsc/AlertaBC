@@ -15,7 +15,8 @@ $(document).ready(function () {
     loadAlerts();
     setupAutoRefresh();
     updateLastUpdateTime();
-    setInterval(updateTimeAgo, 30000);
+    setInterval(updateTimeAgo, 30000); // For weather card "hace x min"
+    setInterval(updateAlertTimes, 60000); // For dynamic alerts strings and auto-removal
     setupNotifications();
 
     // Register Service Worker for PWA
@@ -490,12 +491,36 @@ function formatTimeAgo(timestamp) {
     const now = new Date();
     const diffMs = now - date;
     const diffMins = Math.floor(diffMs / 60000);
+
     if (diffMins < 1) return 'Ahora';
-    if (diffMins < 60) return `${diffMins} min`;
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} h`;
-    return date.toLocaleDateString();
+    if (diffMins < 30) return `hace ${diffMins} min`;
+    if (diffMins >= 30 && diffMins < 60) return `hace media hora`;
+    if (diffMins >= 60) return `hace 1 hora`;
+
+    return `hace ${diffMins} min`;
 }
+
+function updateAlertTimes() {
+    $('.alert-card').each(function () {
+        // We need the timestamp stored somewhere.
+        // Let's rely on data attribute which I'll add in prependAlert
+        const timestamp = $(this).data('timestamp');
+        if (timestamp) {
+            const timeText = formatTimeAgo(timestamp);
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+
+            // Remove if > 1 hour (plus little buffer)
+            if (diffMs > 3660000) { // 61 minutes
+                $(this).fadeOut(500, function () { $(this).remove(); });
+            } else {
+                $(this).find('.time-ago-display').text(timeText);
+            }
+        }
+    });
+}
+
 
 function capitalize(str) {
     if (!str) return '';
@@ -617,14 +642,14 @@ function prependAlert(alert) {
     else if (alert.alert_level === 'green') dotColor = '#198754';
 
     const alertElement = `
-        <div class="alert-card ${alertClass} ${stickyClass} animate__animated animate__fadeInDown mb-3 border-0 shadow-sm" style="border-left: 5px solid ${dotColor} !important; background: white; border-radius: 8px;">
+        <div class="alert-card ${alertClass} ${stickyClass} animate__animated animate__fadeInDown mb-3 border-0 shadow-sm" data-timestamp="${alert.timestamp}" style="border-left: 5px solid ${dotColor} !important; background: white; border-radius: 8px;">
             <div class="p-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-circle me-2" style="color: ${dotColor}; font-size: 0.8rem;"></i>
                         <span class="fw-bold text-dark">ALERTA</span>
                     </div>
-                    <span class="text-muted small">${formatTimeAgo(alert.timestamp)}</span>
+                    <span class="text-muted small time-ago-display">${formatTimeAgo(alert.timestamp)}</span>
                 </div>
                 
                 <div class="text-muted small mb-3">
