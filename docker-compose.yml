@@ -5,7 +5,6 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
-      - ./baja_weather_data.db:/app/baja_weather_data.db
     environment:
       - FLASK_ENV=development
     restart: always
