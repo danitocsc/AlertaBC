@@ -250,7 +250,19 @@ function useGeolocation() {
         return;
     }
 
-    navigator.geolocation.getCurrentPosition(function (position) {
+    const optionsHighAccuracy = {
+        enableHighAccuracy: true,
+        timeout: 6000,
+        maximumAge: 0
+    };
+
+    const optionsLowAccuracy = {
+        enableHighAccuracy: false,
+        timeout: 15000,
+        maximumAge: 300000 // 5 minutes cache
+    };
+
+    function onPositionFound(position) {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
 
@@ -269,18 +281,25 @@ function useGeolocation() {
                 showLocationStatus('error', 'Error al configurar');
             }
         });
-    }, function (error) {
-        console.error("Geolocation error:", error);
+    }
+
+    function onLowAccuracyError(error) {
+        console.error("Geolocation Final Error:", error);
         let msg = 'No se pudo obtener la ubicación';
         if (error.code === 1) msg = 'Permiso denegado';
         else if (error.code === 2) msg = 'Ubicación no disponible';
         else if (error.code === 3) msg = 'Tiempo de espera agotado';
         showLocationStatus('error', msg);
-    }, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-    });
+    }
+
+    function onHighAccuracyError(error) {
+        console.warn("High accuracy geolocation failed, trying low accuracy...", error);
+        // Fallback to low accuracy (helps on Desktop Chrome without GPS)
+        navigator.geolocation.getCurrentPosition(onPositionFound, onLowAccuracyError, optionsLowAccuracy);
+    }
+
+    // Attempt 1: High Accuracy (Best for Mobile)
+    navigator.geolocation.getCurrentPosition(onPositionFound, onHighAccuracyError, optionsHighAccuracy);
 }
 
 function showLocationStatus(type, message) {
