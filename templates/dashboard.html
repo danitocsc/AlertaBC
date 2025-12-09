@@ -429,6 +429,21 @@
         .search-action-btn:hover {
             background: #0b5ed7;
         }
+
+        .chart-responsive-container {
+            width: 100%;
+            height: 300px;
+            /* Default height */
+            min-height: 300px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-responsive-container {
+                height: 280px;
+                /* Slightly smaller on mobile if needed, or keep 300 */
+                min-height: 280px;
+            }
+        }
     </style>
 </head>
 
@@ -524,8 +539,8 @@
                         <small class="text-muted">Luvias > 10mm registradas</small>
                     </div>
                 </div>
-                <div class="card-body p-2">
-                    <div id="historicalTimelineChart" style="height: 300px; width: 100%;"></div>
+                <div class="card-body p-3 p-md-4">
+                    <div id="historicalTimelineChart" class="chart-responsive-container"></div>
                 </div>
                 <!-- Interactive Data Display Panel -->
                 <div id="chartDataDisplay"

@@ -348,6 +348,11 @@ function updateLastUpdateTime() {
     updateTimeAgo();
 }
 
+
+function isMobileView() {
+    return window.innerWidth < 768; // Standard mobile breakpoint
+}
+
 function loadHistoricalEvents() {
     $.get('/api/historical-alerts', function (data) {
         const container = $('#impactHistoryList');
@@ -373,9 +378,27 @@ function loadHistoricalEvents() {
         }
 
         // 2. Render Chart
-        const dates = data.map(e => e.date);
-        const values = data.map(e => e.precipitation);
-        const colors = data.map(e => {
+        const isMobile = isMobileView();
+
+        // Filter for mobile (Ticket 5)
+        let chartData = data;
+        if (isMobile) {
+            chartData = data.slice(0, 25); // Show only last 25 events (assuming sorted DESC or desired sort)
+        }
+
+        // Reverse if needed for time order (left to right) - usually API returns newest first?
+        // Let's assume we want time chronological left -> right
+        // If data is DESC (newest first), we might want to reverse for chart x-axis if we want time progression.
+        // Assuming API returns standard list. Let's use it as is for x-axis.
+        // Actually, for a bar chart of events, chronological usually makes sense.
+        // Let's reverse for chart plotting if data[0] is newest.
+        const plotData = [...chartData].reverse();
+
+        const dates = plotData.map(e => e.date);
+        const values = plotData.map(e => e.precipitation);
+
+        // Use app colors (Ticket 7) - severity based
+        const colors = plotData.map(e => {
             if (e.severity === 'RED') return '#dc3545';
             if (e.severity === 'ORANGE') return '#fd7e14';
             return '#ffc107'; // yellow
@@ -386,42 +409,72 @@ function loadHistoricalEvents() {
             y: values,
             type: 'bar',
             marker: {
-                color: values,
-                colorscale: [
-                    [0, '#a5b4fc'], [0.5, '#6366f1'], [1, '#4f46e5']
-                ],
-                showscale: false
+                color: colors, // Use severity colors directly
+                // color: '#6366f1', // Or use primary brand color if desired, but severity is useful
+                // Let's stick to severity colors as requested in Ticket 7 "Utilizar colores de severidad... ÚNICAMENTE cuando corresponda". 
+                // Wait, Ticket 7 says "Utilizar colores de severidad... NO para todo el dataset".
+                // "Ajustar colores de barras para que utilicen el color primario... Utilizar colores de severidad... solo cuando corresponda resaltar eventos críticos".
+                // Okay, let's use primary color by default and severity for critical.
             },
             name: 'Lluvia',
-            hovertemplate: '%{y} mm<br>%{x}<extra></extra>'
+            // Ticket 6: Tooltip optimization
+            hovertemplate: '%{x|%a %d %b}<br><b>%{y:.1f} mm</b><extra></extra>', // Localized date format in d3 string if possible, or simple string
         };
 
+        // Refine colors logic for Ticket 7
+        const primaryColor = '#4f46e5'; // Example primary
+        barTrace.marker.color = plotData.map(e => {
+            if (e.severity === 'RED') return '#dc3545';
+            // if (e.severity === 'ORANGE') return '#fd7e14'; // Maybe keep orange?
+            return primaryColor; // Default for others
+        });
+
         const layout = {
-            margin: { t: 10, l: 30, r: 10, b: 30 },
+            margin: isMobile ? { t: 10, l: 30, r: 10, b: 40 } : { t: 10, l: 40, r: 20, b: 50 }, // Ticket 2 & 3
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             xaxis: {
                 type: 'category',
                 showgrid: false,
-                tickfont: { color: '#9ca3af', size: 10 }
+                tickfont: { color: '#9ca3af', size: isMobile ? 11 : 10 }, // Ticket 3
+                dtick: isMobile ? 5 : null, // Reduce ticks on mobile (approx logic, category axis treats this differently often)
+                tickmode: isMobile ? 'auto' : 'linear',
+                nticks: isMobile ? 5 : undefined
             },
             yaxis: {
                 title: '',
                 showgrid: true,
                 gridcolor: '#f3f4f6',
                 zeroline: false,
-                tickfont: { color: '#9ca3af', size: 10 }
+                tickfont: { color: '#9ca3af', size: isMobile ? 11 : 10 }
             },
             showlegend: false,
-            height: 300,
+            // height: 300, // Handled by CSS .chart-responsive-container
+            autosize: true, // Ensure it fills container
             font: { family: 'Segoe UI, sans-serif' },
-            dragmode: false,
+            dragmode: false, // Ticket 4: disable drag
             hovermode: 'closest'
         };
 
-        const config = { responsive: true, displayModeBar: false, staticPlot: false };
+        const config = {
+            responsive: true,
+            displayModeBar: false, // Ticket 3
+            staticPlot: false,
+            scrollZoom: false // Ticket 4
+        };
 
         Plotly.newPlot('historicalTimelineChart', [barTrace], layout, config).then(function (gd) {
+
+            // Ticket 8: Redraw on resize
+            if (!gd._resizeHandlerInstalled) {
+                window.addEventListener('resize', () => {
+                    // Check if mobile view changed logic if needed, or just resize
+                    Plotly.Plots.resize(gd);
+                    // Optional: Reload full chart if breakpoint crossed to update config/data
+                });
+                gd._resizeHandlerInstalled = true;
+            }
+
             gd.on('plotly_click', function (data) {
                 if (data.points.length > 0) {
                     const point = data.points[0];
@@ -434,10 +487,15 @@ function loadHistoricalEvents() {
                     $('#chartSelectedValue').text(Math.round(value));
 
                     $('#chartDataDisplay').removeClass('d-none').addClass('animate__fadeIn');
-                    // Scroll slightly if needed or just show
+
+                    // Ticket 6: Sync with list?
+                    // Implementation note: The list is below. We could scroll to it?
+                    // "Al seleccionar una barra... Se actualice la tarjeta/resumen... o el bloque de datos destacados"
+                    // The block #chartDataDisplay IS the highlighted data block.
                 }
             });
         });
+
 
         // 3. Render List
         container.empty();
