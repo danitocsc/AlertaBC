@@ -73,7 +73,7 @@ function updateWeatherCard(data) {
         <div class="weather-card-hero animate__animated animate__fadeIn">
             <div class="hero-header">
                 <!-- Location Selector Button (Redesigned) -->
-                <button onclick="useGeolocation()" class="btn-location-header mb-3">
+                <button onclick="useGeolocation()" class="btn-location-header mb-3 justify-content-center">
                     <div class="d-flex align-items-center text-truncate">
                         <i class="fas fa-map-marker-alt text-primary me-2 flex-shrink-0" style="font-size: 1.1rem;"></i>
                         <span class="text-dark fw-bold text-truncate">${userLocation.location_name}</span>
@@ -141,7 +141,7 @@ function renderLocationSearch(container) {
 
             <div class="search-wrapper">
                 <i class="fas fa-search text-muted ms-3"></i>
-                <input type="text" id="postalCodeInput" placeholder="Ingresa Código Postal (5 dígitos)" maxlength="5">
+                <input type="text" id="postalCodeInput" placeholder="O Ingresa Código Postal (5 dígitos)" maxlength="5">
                 <button onclick="searchLocationFromInput()" class="search-action-btn" title="Buscar">
                     <i class="fas fa-arrow-right"></i>
                 </button>
