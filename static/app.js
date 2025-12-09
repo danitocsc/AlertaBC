@@ -72,8 +72,12 @@ function updateWeatherCard(data) {
     const html = `
         <div class="weather-card-hero animate__animated animate__fadeIn">
             <div class="hero-header">
-                <button onclick="useGeolocation()" class="btn-gps-ghost">
-                    <i class="fas fa-location-arrow me-2"></i> Buscar tu ubicación
+                <!-- Location Selector Button (Redesigned) -->
+                <button onclick="useGeolocation()" class="btn-location-header mb-3">
+                    <div class="d-flex align-items-center text-truncate">
+                        <i class="fas fa-map-marker-alt text-primary me-2 flex-shrink-0" style="font-size: 1.1rem;"></i>
+                        <span class="text-dark fw-bold text-truncate">${userLocation.location_name}</span>
+                    </div>
                 </button>
 
                 <div class="search-wrapper">
@@ -84,9 +88,6 @@ function updateWeatherCard(data) {
                     </button>
                 </div>
                 
-                <div class="text-center mt-3 mb-2">
-                    <small class="text-muted"><i class="fas fa-map-marker-alt"></i> ${userLocation.location_name}</small>
-                </div>
                 <div id="locationStatus" class="text-center small mb-2"></div>
             </div>
 
@@ -130,8 +131,11 @@ function renderLocationSearch(container) {
         <div class="weather-card-hero p-4">
             <h5 class="text-center mb-4 fw-bold text-dark">Configura tu Ubicación</h5>
             
-            <button onclick="useGeolocation()" class="btn-gps-ghost">
-                <i class="fas fa-location-arrow me-2"></i> Buscar tu ubicación
+            <button onclick="useGeolocation()" class="btn-location-header mb-4 w-100 justify-content-center">
+                 <div class="d-flex align-items-center">
+                    <i class="fas fa-map-marker-alt text-primary me-2" style="font-size: 1.1rem;"></i>
+                    <span class="text-primary fw-bold">Buscar tu ubicación</span>
+                </div>
             </button>
 
             <div class="search-wrapper">
