@@ -129,7 +129,8 @@ function updateWeatherCard(data) {
 function renderLocationSearch(container) {
     const html = `
         <div class="weather-card-hero p-4">
-            <h5 class="text-center mb-4 fw-bold text-dark">Configura tu Ubicación</h5>
+            <h4 class="text-center fw-bold text-dark mb-1">Bienvenido a Alerta BC</h4>
+            <p class="text-center text-muted small mb-4">Configura tu ubicación para continuar</p>
             
             <button onclick="useGeolocation()" class="btn-location-header mb-4 w-100 justify-content-center">
                  <div class="d-flex align-items-center">
