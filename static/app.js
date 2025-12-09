@@ -71,7 +71,7 @@ function updateWeatherCard(data) {
 
     const html = `
         <div class="weather-card-hero animate__animated animate__fadeIn">
-            <div class="hero-header">
+            <div class="hero-header pt-3 px-3">
                 <!-- Location Selector Button (Redesigned) -->
                 <button onclick="useGeolocation()" class="btn-location-header mb-3 justify-content-center">
                     <div class="d-flex align-items-center text-truncate">
