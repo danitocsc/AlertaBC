@@ -53,14 +53,16 @@
             text-align: center;
             color: #adb5bd;
             text-decoration: none;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            /* Slightly smaller text */
             flex: 1;
             transition: color 0.3s ease;
-            /* Increased touch target and visual "air" */
-            padding: 18px 0;
+            /* Asymmetrical padding to lift content up */
+            padding: 12px 0 24px 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
+            /* Align to top */
             align-items: center;
         }
 
@@ -71,8 +73,9 @@
 
         .nav-item-bottom i {
             display: block;
-            font-size: 1.4rem;
-            margin-bottom: 4px;
+            font-size: 1.2rem;
+            /* Smaller icon */
+            margin-bottom: 3px;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -129,7 +132,6 @@
             color: #0d6efd;
         }
 
-        /* Hero Content Split */
         .weather-card-hero .hero-content {
             display: flex;
             justify-content: space-between;
@@ -153,7 +155,6 @@
         .weather-card-hero .weather-icon-large {
             font-size: 3rem;
             color: #fbbc04;
-            /* Default sun color */
         }
 
         .weather-card-hero .hero-right {
@@ -162,7 +163,6 @@
             gap: 8px;
         }
 
-        /* Data Chips */
         .weather-card-hero .data-chip {
             background: #f8f9fa;
             border-radius: 12px;
@@ -177,9 +177,7 @@
         .weather-card-hero .data-chip i {
             margin-right: 8px;
             font-size: 1.2rem;
-            /* Increased from 1rem */
             width: 24px;
-            /* Increased width */
             text-align: center;
         }
 
@@ -188,15 +186,12 @@
             color: #202124;
             margin-left: auto;
             font-size: 0.95rem;
-            /* Slightly larger text */
         }
 
-        /* Horizontal Hourly Slider */
         .weather-card-hero .hourly-slider-container {
             border-top: 1px solid #f1f3f4;
             padding: 15px 0;
             margin-top: 10px;
-            /* Ensure container clips overflow */
             overflow: hidden;
         }
 
@@ -206,16 +201,12 @@
             padding: 0 20px;
             gap: 25px;
             scrollbar-width: none;
-            /* Firefox */
             -ms-overflow-style: none;
-            /* IE 10+ */
-            /* Right padding to show cut-off effect */
             padding-right: 40px;
         }
 
         .weather-card-hero .hourly-slider::-webkit-scrollbar {
             display: none;
-            /* Chrome/Safari */
         }
 
         .weather-card-hero .hourly-cell {
