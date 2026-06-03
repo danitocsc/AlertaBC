@@ -11,3 +11,4 @@ venv/
 .obsidian/
 -p/
 baja_weather_data*.db
+.vercel
