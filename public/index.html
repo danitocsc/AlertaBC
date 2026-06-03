@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistema de Alerta Temprana - Lluvia Baja California</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Alerta BC">
+    <link rel="apple-touch-icon" href="/icon.svg">
+    <style>
+        :root {
+            --green-alert: #28a745;
+            --yellow-alert: #ffc107;
+            --orange-alert: #fd7e14;
+            --red-alert: #dc3545;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: calc(100px + env(safe-area-inset-bottom));
+            min-height: 100vh;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            padding: 0;
+            padding-bottom: env(safe-area-inset-bottom);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item-bottom {
+            text-align: center;
+            color: #adb5bd;
+            text-decoration: none;
+            font-size: 0.7rem;
+            flex: 1;
+            transition: color 0.3s ease;
+            padding: 12px 0 24px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .nav-item-bottom.active {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+        .nav-item-bottom i {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .nav-item-bottom.active i {
+            transform: translateY(-2px);
+        }
+
+        .view-container {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sticky-alert {
+            position: sticky;
+            top: 10px;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px !important;
+        }
+
+        .dashboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .weather-card-hero {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .weather-card-hero .search-wrapper button:hover {
+            color: #0d6efd;
+        }
+
+        .weather-card-hero .hero-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px 20px 20px;
+        }
+
+        .weather-card-hero .hero-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .weather-card-hero .temp-display {
+            font-size: 4.5rem;
+            font-weight: 500;
+            color: #202124;
+            line-height: 1;
+            margin-right: 15px;
+        }
+
+        .weather-card-hero .weather-icon-large {
+            font-size: 3rem;
+            color: #fbbc04;
+        }
+
+        .weather-card-hero .hero-right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .weather-card-hero .data-chip {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #5f6368;
+            min-width: 100px;
+        }
+
+        .weather-card-hero .data-chip i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .weather-card-hero .data-chip span {
+            font-weight: 600;
+            color: #202124;
+            margin-left: auto;
+            font-size: 0.95rem;
+        }
+
+        .weather-card-hero .hourly-slider-container {
+            border-top: 1px solid #f1f3f4;
+            padding: 15px 0;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .weather-card-hero .hourly-slider {
+            display: flex;
+            overflow-x: auto;
+            padding: 0 20px;
+            gap: 25px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-right: 40px;
+        }
+
+        .weather-card-hero .hourly-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .weather-card-hero .hourly-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .weather-card-hero .hourly-time {
+            font-size: 0.8rem;
+            color: #5f6368;
+            margin-bottom: 8px;
+        }
+
+        .weather-card-hero .hourly-icon {
+            font-size: 1.2rem;
+            color: #5f6368;
+            margin-bottom: 8px;
+        }
+
+        .weather-card-hero .hourly-temp {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        .alert-card {
+            border: none;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .alert-indicator {
+            width: 6px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .indicator-green { background-color: var(--green-alert); }
+        .indicator-yellow { background-color: var(--yellow-alert); }
+        .indicator-orange { background-color: var(--orange-alert); }
+        .indicator-red { background-color: var(--red-alert); }
+
+        .alert-header {
+            padding: 15px 15px 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-green .alert-header { background: rgba(40, 167, 69, 0.1); color: var(--green-alert); }
+        .alert-yellow .alert-header { background: rgba(255, 193, 7, 0.1); color: #856404; }
+        .alert-orange .alert-header { background: rgba(253, 126, 20, 0.1); color: var(--orange-alert); }
+        .alert-red .alert-header { background: rgba(220, 53, 69, 0.1); color: var(--red-alert); }
+
+        .alert-body { padding: 15px; padding-left: 25px; }
+
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .emergency-banner {
+            background: linear-gradient(45deg, var(--red-alert), var(--orange-alert));
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .pulse { animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .badge-pill {
+            border-radius: 50rem;
+            padding: 0.4em 0.8em;
+            font-weight: 600;
+            font-size: 0.75em;
+        }
+
+        .btn-location-header {
+            background: transparent;
+            border: none;
+            padding: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            transition: opacity 0.2s;
+            text-align: left;
+        }
+
+        .btn-location-header:hover { opacity: 0.8; }
+
+        .search-wrapper {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 30px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .search-wrapper:focus-within {
+            background: #fff;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .search-wrapper input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 12px 15px;
+            outline: none;
+            font-size: 0.95rem;
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .search-action-btn {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-right: 4px;
+        }
+
+        .search-action-btn:hover { background: #0b5ed7; }
+
+        .chart-responsive-container {
+            width: 100%;
+            height: 300px;
+            min-height: 300px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-responsive-container {
+                height: 280px;
+                min-height: 280px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- VIEW: HOME -->
+        <div id="view-home" class="view-container active">
+            <div class="emergency-banner" id="emergencyBanner">
+                <span id="emergencyMessage"></span>
+            </div>
+
+            <div id="weatherCardContainer">
+                <div class="weather-card-hero p-5 text-center text-muted">
+                    <i class="fas fa-spinner fa-spin fa-2x mb-3"></i><br>
+                    Cargando datos...
+                </div>
+            </div>
+
+            <div class="mt-4" id="alerts">
+                <h6 class="text-muted text-uppercase fw-bold mb-3 ps-2" style="font-size: 0.8rem; letter-spacing: 1px;">
+                    Alertas Recientes
+                </h6>
+                <div id="alertsList"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: CHARTS -->
+        <div id="view-charts" class="view-container">
+            <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                <div>
+                    <h4 class="fw-bold mb-0 text-dark" style="letter-spacing: -0.5px;">Análisis Atmosférico</h4>
+                    <small class="text-muted">Histórico y Proyección</small>
+                </div>
+                <div class="bg-white rounded-circle shadow-sm p-2 d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;">
+                    <i class="fas fa-chart-line text-primary"></i>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4" id="statsOverview">
+                <div class="col-6 col-md-4">
+                    <div class="card border-0 shadow-sm h-100"
+                        style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #f0f2f5);">
+                        <div class="card-body p-3">
+                            <div class="text-muted small mb-1 fw-bold text-uppercase" style="font-size: 0.7rem;">Eventos (2A)</div>
+                            <div class="d-flex align-items-baseline">
+                                <h3 class="fw-bold mb-0 text-dark" id="statTotalEvents">--</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius: 20px;">
+                        <div class="card-body p-3">
+                            <div class="text-muted small mb-1 fw-bold text-uppercase" style="font-size: 0.7rem;">Máx Lluvia</div>
+                            <div class="d-flex align-items-baseline">
+                                <h3 class="fw-bold mb-0 text-primary" id="statMaxRain">--</h3>
+                                <small class="text-muted ms-1">mm</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 d-none d-md-block">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius: 20px;">
+                        <div class="card-body p-3">
+                            <div class="text-muted small mb-1 fw-bold text-uppercase" style="font-size: 0.7rem;">Ultimo Evento</div>
+                            <div class="fw-bold text-dark" id="statLastDate">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 24px;">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fw-bold mb-0">Eventos de Lluvia Torrencial</h6>
+                        <small class="text-muted">Luvias > 10mm registradas</small>
+                    </div>
+                </div>
+                <div class="card-body p-3 p-md-4">
+                    <div id="historicalTimelineChart" class="chart-responsive-container"></div>
+                </div>
+                <div id="chartDataDisplay"
+                    class="bg-light p-3 mx-2 mb-2 rounded-3 d-none animate__animated animate__fadeIn">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-secondary fw-bold text-uppercase" style="font-size: 0.7rem;">Seleccionado</small>
+                            <div id="chartSelectedDate" class="fw-bold text-dark">--</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="display-6 fw-bold text-primary mb-0 lh-1" id="chartSelectedValue">--</div>
+                            <small class="text-muted">mm precipitación</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h6 class="fw-bold text-dark mb-3 px-2">Registro Detallado</h6>
+            <div id="impactHistoryList" class="row g-3">
+                <div class="col-12 text-center py-5 text-muted">
+                    <i class="fas fa-spinner fa-spin fa-2x mb-3 text-primary-50"></i><br>Cargando datos históricos...
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: SETTINGS -->
+        <div id="view-settings" class="view-container">
+            <h5 class="mb-4 fw-bold text-dark">Configuración</h5>
+
+            <div class="settings-card">
+                <h6 class="card-title mb-3"><i class="fas fa-bell text-warning me-2"></i> Notificaciones</h6>
+                <p class="small text-muted mb-3">Recibe alertas instantáneas en tu dispositivo.</p>
+                <button class="btn btn-outline-primary w-100 rounded-pill" id="notifyBtn">
+                    Activar Notificaciones
+                </button>
+            </div>
+
+            <div class="settings-card">
+                <h6 class="card-title mb-3"><i class="fas fa-sync text-primary me-2"></i> Datos</h6>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="small">Auto-actualizar (1 min)</span>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="autoRefreshToggle">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100 rounded-pill" onclick="refreshData()" id="manualRefreshBtn">
+                    Actualizar Ahora
+                </button>
+
+                <div class="text-center mt-3 border-top pt-3">
+                    <small class="text-muted d-block">Última actualización</small>
+                    <span id="lastUpdateTime" class="fw-bold text-dark">--:--</span>
+                    <div class="text-muted small" id="timeAgo"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    Sistema de Alerta Temprana v2.1<br>
+                    Powered by Open-Meteo
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <a href="#" class="nav-item-bottom active" onclick="switchTab('home')">
+            <i class="fas fa-home"></i> Inicio
+        </a>
+        <a href="#" class="nav-item-bottom" onclick="switchTab('charts')">
+            <i class="fas fa-chart-pie"></i> Gráficas
+        </a>
+        <a href="#" class="nav-item-bottom" onclick="switchTab('settings')">
+            <i class="fas fa-cog"></i> Ajustes
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/postal-codes.js"></script>
+    <script src="/app.js"></script>
+</body>
+
+</html>
